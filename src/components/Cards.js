@@ -7,7 +7,7 @@ import NumericLabel from "react-pretty-numbers";
 import axios from "axios";
 import "./Cards.css";
 
-function Cards() {
+function Cards({ countryData }) {
   const [fetchedGlobal, setFetchedGlobal] = useState({
     NewConfirmed: 0,
     TotalConfirmed: 0,
@@ -17,27 +17,40 @@ function Cards() {
     TotalDeaths: 0,
   });
 
+  // console.log(countryData);
+
   useEffect(() => {
     const fetchGlobal = async () => {
-      try {
-        const {
-          data: { Global },
-        } = await axios.get("https://api.covid19api.com/summary");
-
+      if (countryData) {
         setFetchedGlobal({
-          NewConfirmed: Global.NewConfirmed,
-          TotalConfirmed: Global.TotalConfirmed,
-          NewRecovered: Global.NewRecovered,
-          TotalRecovered: Global.TotalRecovered,
-          NewDeaths: Global.NewDeaths,
-          TotalDeaths: Global.TotalDeaths,
+          NewConfirmed: countryData.NewConfirmed,
+          TotalConfirmed: countryData.TotalConfirmed,
+          NewRecovered: countryData.NewRecovered,
+          TotalRecovered: countryData.TotalRecovered,
+          NewDeaths: countryData.NewDeaths,
+          TotalDeaths: countryData.TotalDeaths,
         });
-      } catch (error) {
-        console.log(error);
+      } else {
+        try {
+          const {
+            data: { Global },
+          } = await axios.get("https://api.covid19api.com/summary");
+
+          setFetchedGlobal({
+            NewConfirmed: Global.NewConfirmed,
+            TotalConfirmed: Global.TotalConfirmed,
+            NewRecovered: Global.NewRecovered,
+            TotalRecovered: Global.TotalRecovered,
+            NewDeaths: Global.NewDeaths,
+            TotalDeaths: Global.TotalDeaths,
+          });
+        } catch (error) {
+          console.log(error);
+        }
       }
     };
     fetchGlobal();
-  }, [setFetchedGlobal]);
+  }, [setFetchedGlobal, countryData]);
 
   let option = {
     justification: "L",
